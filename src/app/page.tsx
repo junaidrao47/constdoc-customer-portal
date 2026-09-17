@@ -1,69 +1,15 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { apiRequest } from "@/lib/api";
+import type { Industry, Location, Package, Service, WorkerRange } from "@/lib/types";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+  const services = useQuery({ queryKey: ["public-services"], queryFn: () => apiRequest<Service[]>("/public/services") });
+  const packages = useQuery({ queryKey: ["public-packages"], queryFn: () => apiRequest<Package[]>("/public/packages") });
+  return <main className="min-h-screen bg-[#f7f3eb] text-[#203a3a]"><nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6"><Link href="/" className="font-serif text-2xl font-bold">Const<span className="text-[#bb6b36]">Doc</span></Link><div className="flex items-center gap-6 text-sm"><a href="#services" className="hidden md:block">Services</a><a href="#calculator" className="hidden md:block">Calculator</a><Link href="/login" className="rounded-full bg-[#203a3a] px-5 py-2.5 font-semibold text-white">Customer portal</Link></div></nav><section className="mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center"><div><p className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]"><ShieldCheck size={16}/> Construction compliance, made clear</p><h1 className="max-w-3xl font-serif text-5xl leading-[1.02] sm:text-7xl">Keep every project ready for the next inspection.</h1><p className="mt-7 max-w-xl text-lg leading-8 text-[#53605d]">A calm, accountable workspace for documents, services, quotations, and compliance milestones.</p><div className="mt-9 flex flex-wrap gap-3"><a href="#calculator" className="flex items-center gap-2 rounded-full bg-[#bb6b36] px-6 py-3 font-semibold text-white">Calculate estimate <ArrowRight size={17}/></a><Link href="/register" className="rounded-full border border-[#203a3a]/20 px-6 py-3 font-semibold">Create account</Link></div></div><div className="min-h-[390px] rounded-[2rem] bg-[#203a3a] p-8 text-white shadow-xl"><div className="flex h-full flex-col justify-between"><ShieldCheck size={42} className="text-[#e9b17c]"/><div><p className="text-sm text-white/60">One accountable place</p><p className="mt-2 max-w-sm font-serif text-4xl leading-tight">From first quote to approved file.</p></div></div></div></section><section id="services" className="border-y border-[#203a3a]/10 bg-white/60"><div className="mx-auto max-w-7xl px-6 py-16"><p className="text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]">Services and packages</p><h2 className="mt-2 font-serif text-4xl">Support for the work that matters.</h2><div className="mt-10 grid gap-4 md:grid-cols-3">{(services.data ?? []).slice(0, 6).map((service) => <article key={service.id} className="border border-[#203a3a]/10 bg-[#f7f3eb] p-6"><h3 className="font-serif text-2xl">{service.name}</h3><p className="mt-3 text-sm leading-6 text-[#53605d]">{service.description ?? "Practical compliance support for active construction teams."}</p><p className="mt-6 font-semibold text-[#bb6b36]">From {service.basePrice.toLocaleString()} PKR</p></article>)}{services.isSuccess && services.data.length === 0 && <p className="text-sm text-[#53605d]">Services are being configured. Check back shortly.</p>}</div><div className="mt-10 grid gap-4 sm:grid-cols-2">{(packages.data ?? []).slice(0, 4).map((pkg) => <article key={pkg.id} className="border border-[#203a3a]/10 bg-white p-6"><p className="text-xs font-bold uppercase tracking-widest text-[#bb6b36]">{pkg.type}</p><h3 className="mt-3 font-serif text-2xl">{pkg.name}</h3><p className="mt-4 text-xl font-semibold">{pkg.price.toLocaleString()} PKR</p><p className="mt-2 text-sm text-[#53605d]">{pkg.durationDays} day service period</p></article>)}</div></div></section><Calculator/><footer className="bg-[#203a3a] px-6 py-8 text-center text-sm text-white/60">ConstDoc · Construction compliance service management</footer></main>;
 }
+
+function Calculator() { const locations = useQuery({ queryKey: ["public-locations"], queryFn: () => apiRequest<Location[]>("/public/locations") }); const industries = useQuery({ queryKey: ["public-industries"], queryFn: () => apiRequest<Industry[]>("/public/industries") }); const ranges = useQuery({ queryKey: ["public-ranges"], queryFn: () => apiRequest<WorkerRange[]>("/public/worker-ranges") }); const services = useQuery({ queryKey: ["public-services-calc"], queryFn: () => apiRequest<Service[]>("/public/services") }); const [workers, setWorkers] = useState("10"); const [locationId, setLocationId] = useState(""); const [industryId, setIndustryId] = useState(""); const [total, setTotal] = useState<number | null>(null); const calculate = async () => { if (!locationId || !industryId) return; const result = await apiRequest<{ total: number }>("/public/quotations/calculate", { method: "POST", body: JSON.stringify({ workerCount: Number(workers), locationId, industryId, serviceIds: services.data?.slice(0, 1).map((item) => item.id) ?? [] }) }); setTotal(result.total); }; return <section id="calculator" className="mx-auto max-w-7xl px-6 py-20"><div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr]"><div><p className="text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]">Pricing calculator</p><h2 className="mt-2 font-serif text-4xl">A first estimate, grounded in your details.</h2><p className="mt-4 leading-7 text-[#53605d]">Choose your location, industry, and team size. The API calculates from configured database pricing.</p></div><div className="border border-[#203a3a]/15 bg-white p-6"><div className="grid gap-4 sm:grid-cols-2"><label className="text-sm font-semibold">Workers<input className="mt-2 h-11 w-full border px-3" type="number" min="1" value={workers} onChange={(event) => setWorkers(event.target.value)} /></label><label className="text-sm font-semibold">Location<select className="mt-2 h-11 w-full border px-3" value={locationId} onChange={(event) => setLocationId(event.target.value)}><option value="">Select location</option>{locations.data?.map((item) => <option key={item.id} value={item.id}>{item.city}, {item.state}</option>)}</select></label><label className="text-sm font-semibold">Industry<select className="mt-2 h-11 w-full border px-3" value={industryId} onChange={(event) => setIndustryId(event.target.value)}><option value="">Select industry</option>{industries.data?.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div><button onClick={() => void calculate()} disabled={!locationId || !industryId || !ranges.data?.length} className="mt-6 bg-[#bb6b36] px-6 py-3 font-semibold text-white">Calculate estimate</button>{total !== null && <div className="mt-6 border-t border-[#203a3a]/10 pt-5"><CheckCircle2 className="text-[#bb6b36]"/><p className="mt-2 text-sm text-[#53605d]">Estimated total</p><p className="font-serif text-4xl">{total.toLocaleString()} PKR</p></div>}</div></div></section>; }
