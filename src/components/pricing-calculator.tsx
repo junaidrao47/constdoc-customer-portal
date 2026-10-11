@@ -35,25 +35,18 @@ export function PricingCalculator() {
     setError("");
     setIsCalculating(true);
     try {
-      const result = await apiRequest<{ total: number }>(
-        "/public/quotations/calculate",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            workerCount: Number(workers),
-            locationId,
-            industryId,
-            serviceIds: services.data?.slice(0, 1).map((item) => item.id) ?? [],
-          }),
-        },
-      );
+      const result = await apiRequest<{ total: number }>("/public/quotations/calculate", {
+        method: "POST",
+        body: JSON.stringify({
+          workerCount: Number(workers),
+          locationId,
+          industryId,
+          serviceIds: services.data?.slice(0, 1).map((item) => item.id) ?? [],
+        }),
+      });
       setTotal(result.total);
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "The estimate could not be calculated.",
-      );
+      setError(cause instanceof Error ? cause.message : "The estimate could not be calculated.");
     } finally {
       setIsCalculating(false);
     }
@@ -66,12 +59,10 @@ export function PricingCalculator() {
           <p className="text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]">
             Pricing calculator
           </p>
-          <h2 className="mt-2 font-serif text-4xl">
-            A first estimate, grounded in your details.
-          </h2>
+          <h2 className="mt-2 font-serif text-4xl">A first estimate, grounded in your details.</h2>
           <p className="mt-4 leading-7 text-[#53605d]">
-            Choose your location, industry, and team size. The API calculates
-            from configured database pricing.
+            Choose your location, industry, and team size. The API calculates from configured
+            database pricing.
           </p>
         </div>
         <div className="border border-[#203a3a]/15 bg-white p-6">
@@ -119,12 +110,7 @@ export function PricingCalculator() {
           </div>
           <button
             onClick={() => void calculate()}
-            disabled={
-              !locationId ||
-              !industryId ||
-              !ranges.data?.length ||
-              isCalculating
-            }
+            disabled={!locationId || !industryId || !ranges.data?.length || isCalculating}
             className="mt-6 bg-[#bb6b36] px-6 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCalculating ? "Calculating..." : "Calculate estimate"}
@@ -141,9 +127,7 @@ export function PricingCalculator() {
             <div className="mt-6 border-t border-[#203a3a]/10 pt-5">
               <CheckCircle2 className="text-[#bb6b36]" />
               <p className="mt-2 text-sm text-[#53605d]">Estimated total</p>
-              <p className="font-serif text-4xl">
-                {total.toLocaleString()} PKR
-              </p>
+              <p className="font-serif text-4xl">{total.toLocaleString()} PKR</p>
             </div>
           )}
         </div>

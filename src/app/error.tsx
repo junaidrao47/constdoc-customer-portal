@@ -1,3 +1,28 @@
 "use client";
 
-export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) { return <main className="flex min-h-screen items-center justify-center bg-[#f7f3eb] px-6 text-[#203a3a]"><section className="max-w-md border border-red-200 bg-white p-8 text-center shadow-lg"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#bb6b36]">Something went wrong</p><h1 className="mt-3 font-serif text-3xl">We could not load this page.</h1><p className="mt-3 text-sm leading-6 text-[#53605d]">Please try again. Your account and documents are still safe.</p><button className="mt-6 bg-[#203a3a] px-5 py-2.5 text-sm font-semibold text-white" onClick={() => reset()}>Try again</button></section></main>; }
+export default function Error({
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#f7f3eb] px-6 text-[#203a3a]">
+      <section className="max-w-md border border-red-200 bg-white p-8 text-center shadow-lg">
+        <p className="text-xs font-bold uppercase tracking-[.18em] text-[#bb6b36]">
+          Something went wrong
+        </p>
+        <h1 className="mt-3 font-serif text-3xl">We could not load this page.</h1>
+        <p className="mt-3 text-sm leading-6 text-[#53605d]">
+          Please try again. Your account and documents are still safe.
+        </p>
+        <button
+          className="mt-6 bg-[#203a3a] px-5 py-2.5 text-sm font-semibold text-white"
+          onClick={() => reset()}
+        >
+          Try again
+        </button>
+      </section>
+    </main>
+  );
+}

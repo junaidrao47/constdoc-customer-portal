@@ -17,8 +17,7 @@ export default async function ServicesPage() {
           Practical compliance support for active projects.
         </h1>
         <p className="mt-6 max-w-2xl text-lg leading-8 text-[#53605d]">
-          Choose the support your team needs, then use the calculator to shape a
-          first estimate.
+          Choose the support your team needs, then use the calculator to shape a first estimate.
         </p>
       </section>
       <ServicesSection services={services} />

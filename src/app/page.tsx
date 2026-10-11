@@ -1,19 +1,13 @@
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import {
-  ServicesSection,
-  PackagesSection,
-} from "@/components/catalog-sections";
+import { ServicesSection, PackagesSection } from "@/components/catalog-sections";
 import { PricingCalculator } from "@/components/pricing-calculator";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 import { getPublicPackages, getPublicServices } from "@/lib/public-api";
 
 export default async function HomePage() {
-  const [services, packages] = await Promise.all([
-    getPublicServices(),
-    getPublicPackages(),
-  ]);
+  const [services, packages] = await Promise.all([getPublicServices(), getPublicPackages()]);
 
   return (
     <main className="min-h-screen bg-[#f7f3eb] text-[#203a3a]">
@@ -27,8 +21,8 @@ export default async function HomePage() {
             Keep every project ready for the next inspection.
           </h1>
           <p className="mt-7 max-w-xl text-lg leading-8 text-[#53605d]">
-            A calm, accountable workspace for documents, services, quotations,
-            and compliance milestones.
+            A calm, accountable workspace for documents, services, quotations, and compliance
+            milestones.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link

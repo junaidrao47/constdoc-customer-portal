@@ -29,24 +29,13 @@ export default function FaqPage() {
     <main className="min-h-screen bg-[#f7f3eb] text-[#203a3a]">
       <PublicHeader />
       <section className="mx-auto max-w-4xl px-6 py-20">
-        <p className="text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]">
-          FAQ
-        </p>
-        <h1 className="mt-3 font-serif text-5xl">
-          Common questions, answered.
-        </h1>
+        <p className="text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]">FAQ</p>
+        <h1 className="mt-3 font-serif text-5xl">Common questions, answered.</h1>
         <div className="mt-10 space-y-4">
           {questions.map((item) => (
-            <details
-              key={item.question}
-              className="border border-[#203a3a]/10 bg-white p-6"
-            >
-              <summary className="cursor-pointer font-serif text-xl">
-                {item.question}
-              </summary>
-              <p className="mt-4 max-w-2xl leading-7 text-[#53605d]">
-                {item.answer}
-              </p>
+            <details key={item.question} className="border border-[#203a3a]/10 bg-white p-6">
+              <summary className="cursor-pointer font-serif text-xl">{item.question}</summary>
+              <p className="mt-4 max-w-2xl leading-7 text-[#53605d]">{item.answer}</p>
             </details>
           ))}
         </div>

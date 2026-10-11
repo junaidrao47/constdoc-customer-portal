@@ -16,8 +16,7 @@ export default async function PackagesPage() {
           A structured starting point for your next stage.
         </h1>
         <p className="mt-6 max-w-2xl text-lg leading-8 text-[#53605d]">
-          Compare configured packages and choose a service period that fits your
-          operation.
+          Compare configured packages and choose a service period that fits your operation.
         </p>
       </section>
       <PackagesSection packages={packages} />

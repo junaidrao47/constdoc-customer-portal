@@ -15,14 +15,12 @@ export default function AboutPage() {
         </h1>
         <div className="mt-10 grid gap-8 text-lg leading-8 text-[#53605d] md:grid-cols-2">
           <p>
-            ConstDoc brings services, quotations, documents, approvals, and
-            renewal milestones into one dependable workspace for construction
-            teams.
+            ConstDoc brings services, quotations, documents, approvals, and renewal milestones into
+            one dependable workspace for construction teams.
           </p>
           <p>
-            Our approach keeps every handoff visible: customers know what is
-            needed, staff know what to review, and managers have a reliable
-            record of progress.
+            Our approach keeps every handoff visible: customers know what is needed, staff know what
+            to review, and managers have a reliable record of progress.
           </p>
         </div>
       </section>
