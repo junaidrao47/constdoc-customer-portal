@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { PackagesSection } from "@/components/catalog-sections";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 import { getPublicPackages } from "@/lib/public-api";
+
+export const metadata: Metadata = {
+  title: "Packages",
+};
 
 export default async function PackagesPage() {
   const packages = await getPublicPackages();

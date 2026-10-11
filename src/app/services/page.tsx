@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { ServicesSection } from "@/components/catalog-sections";
 import { PricingCalculator } from "@/components/pricing-calculator";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 import { getPublicServices } from "@/lib/public-api";
+
+export const metadata: Metadata = {
+  title: "Services",
+};
 
 export default async function ServicesPage() {
   const services = await getPublicServices();

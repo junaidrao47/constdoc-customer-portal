@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { ShieldCheck } from "lucide-react";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
+
+export const metadata: Metadata = {
+  title: "About",
+};
 
 export default function AboutPage() {
   return (
