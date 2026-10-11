@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ApiError, apiRequest, downloadRequest } from "@/lib/api";
 import type { DocumentRecord } from "@/lib/types";
+import { StatusBadge } from "@/components/status-badge";
 
 const MAX_BYTES = 25 * 1024 * 1024;
 const ALLOWED = [
@@ -125,14 +126,16 @@ export default function DocumentsPage() {
   const listItems = documents.data ?? [];
   return (
     <div>
-      <p className="text-xs font-bold uppercase tracking-[.18em] text-[#bb6b36]">Document centre</p>
+      <p className="text-xs font-bold uppercase tracking-[.18em] text-primary">Document centre</p>
       <h1 className="mt-2 font-serif text-4xl">Your compliance files</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-[#53605d]">
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
         Files are uploaded through a protected route and reviewed by your compliance team.
       </p>
-      <section className="mt-8 border border-dashed border-[#bb6b36]/60 bg-white p-6">
+      <section className="mt-8 border border-dashed border-primary/40 bg-card p-6">
         <h2 className="font-serif text-2xl">Add a document</h2>
-        <p className="mt-2 text-sm text-[#53605d]">PDF, office files, and images up to 25MB.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          PDF, office files, and images up to 25MB.
+        </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <input
             type="file"
@@ -148,59 +151,58 @@ export default function DocumentsPage() {
           <button
             disabled={!file || isUploading}
             onClick={() => void upload()}
-            className="bg-[#203a3a] px-5 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isUploading ? "Uploading securely..." : "Upload securely"}
           </button>
         </div>
         {error && (
-          <p role="alert" className="mt-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <p
+            role="alert"
+            className="mt-4 border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+          >
             {error}
           </p>
         )}
         {message && (
           <p
             role="status"
-            className="mt-4 border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800"
+            className="mt-4 border border-success/30 bg-success/10 p-3 text-sm text-success"
           >
             {message}
           </p>
         )}
       </section>
-      <section className="mt-8 border border-[#203a3a]/10 bg-white p-6">
+      <section className="mt-8 border border-border bg-card p-6">
         <h2 className="font-serif text-2xl">Uploaded files</h2>
         {documents.isError && (
-          <p role="alert" className="mt-4 text-sm text-red-700">
+          <p role="alert" className="mt-4 text-sm text-destructive">
             {documents.error instanceof Error
               ? documents.error.message
               : "Files could not be loaded."}
           </p>
         )}
         {documents.isLoading && (
-          <p className="mt-4 text-sm text-[#53605d]">Loading your files...</p>
+          <p className="mt-4 text-sm text-muted-foreground">Loading your files...</p>
         )}
         <div className="mt-5 space-y-3">
           {listItems.map((document) => (
             <div
-              className="flex flex-wrap items-center justify-between gap-3 border-b border-[#203a3a]/10 py-3"
+              className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3"
               key={document.id}
             >
               <div>
                 <p className="font-medium">{document.fileName}</p>
-                <p className="text-xs text-[#53605d]">
+                <p className="text-xs text-muted-foreground">
                   Added {new Date(document.createdAt).toLocaleDateString()}
                 </p>
-                {document.status && (
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[#bb6b36]">
-                    {document.status.replace("_", " ")}
-                  </p>
-                )}
+                {document.status && <StatusBadge status={document.status} className="mt-1" />}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => void download(document, "original")}
-                  className="bg-[#203a3a] px-3 py-2 text-xs font-semibold text-white"
+                  className="bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
                 >
                   Download original
                 </button>
@@ -208,7 +210,7 @@ export default function DocumentsPage() {
                   <button
                     type="button"
                     onClick={() => void download(document, "approved")}
-                    className="border border-emerald-700 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800"
+                    className="border border-success/30 bg-success/10 px-3 py-2 text-xs font-semibold text-success"
                   >
                     Download approved
                   </button>
@@ -218,7 +220,7 @@ export default function DocumentsPage() {
           ))}
         </div>
         {documents.isSuccess && listItems.length === 0 && (
-          <p className="mt-5 text-sm text-[#53605d]">No documents uploaded yet.</p>
+          <p className="mt-5 text-sm text-muted-foreground">No documents uploaded yet.</p>
         )}
       </section>
     </div>

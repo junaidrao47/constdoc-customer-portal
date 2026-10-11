@@ -6,7 +6,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const { session, isLoading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  if (isLoading) return <div className="min-h-screen bg-[#f7f3eb]" />;
+  if (isLoading) return <div className="min-h-screen bg-background" />;
   if (!session) {
     router.replace("/login");
     return null;
@@ -16,14 +16,14 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     return null;
   }
   return (
-    <div className="min-h-screen bg-[#f7f3eb] text-[#203a3a]">
-      <header className="border-b border-[#203a3a]/10 bg-white">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link href="/dashboard" className="font-serif text-2xl font-bold">
-            Const<span className="text-[#bb6b36]">Doc</span>
+            Const<span className="text-primary">Doc</span>
           </Link>
           <div className="flex items-center gap-5 text-sm">
-            <span className="hidden text-[#53605d] sm:block">
+            <span className="hidden text-muted-foreground sm:block">
               {session.user.name ?? session.user.email}
             </span>
             <button
@@ -31,7 +31,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                 logout();
                 router.replace("/");
               }}
-              className="font-semibold text-[#bb6b36]"
+              className="font-semibold text-primary"
             >
               Sign out
             </button>
@@ -39,28 +39,28 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         </div>
       </header>
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[220px_1fr]">
-        <nav className="border-b border-[#203a3a]/10 bg-white p-4 lg:min-h-[calc(100vh-81px)] lg:border-b-0 lg:border-r">
+        <nav className="border-b border-border bg-card p-4 lg:min-h-[calc(100vh-81px)] lg:border-b-0 lg:border-r">
           <div className="flex gap-2 overflow-auto lg:block lg:space-y-1">
             <Link
-              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname === "/dashboard" ? "bg-[#203a3a] text-white" : "text-[#53605d]"}`}
+              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname === "/dashboard" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
               href="/dashboard"
             >
               Overview
             </Link>
             <Link
-              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname === "/dashboard/documents" ? "bg-[#203a3a] text-white" : "text-[#53605d]"}`}
+              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname === "/dashboard/documents" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
               href="/dashboard/documents"
             >
               Documents
             </Link>
             <Link
-              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname.startsWith("/dashboard/quotations") ? "bg-[#203a3a] text-white" : "text-[#53605d]"}`}
+              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname.startsWith("/dashboard/quotations") ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
               href="/dashboard/quotations"
             >
               Quotations
             </Link>
             <Link
-              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname === "/dashboard/billing" ? "bg-[#203a3a] text-white" : "text-[#53605d]"}`}
+              className={`block whitespace-nowrap px-3 py-2 text-sm ${pathname === "/dashboard/billing" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
               href="/dashboard/billing"
             >
               Billing

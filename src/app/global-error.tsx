@@ -8,13 +8,13 @@ export default function GlobalError({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#f7f3eb] text-[#203a3a]">
+      <body className="bg-background text-foreground">
         <main className="flex min-h-screen items-center justify-center px-6 text-center">
           <section>
             <h1 className="font-serif text-3xl">ConstDoc is temporarily unavailable</h1>
-            <p className="mt-3 text-sm text-[#53605d]">Please try again.</p>
+            <p className="mt-3 text-sm text-muted-foreground">Please try again.</p>
             <button
-              className="mt-6 bg-[#203a3a] px-5 py-2.5 text-sm font-semibold text-white"
+              className="mt-6 bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
               onClick={() => reset()}
             >
               Try again

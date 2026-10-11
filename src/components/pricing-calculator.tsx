@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
 import { apiRequest } from "@/lib/api";
 import type { Industry, Location, Service, WorkerRange } from "@/lib/types";
+import { formatMoney } from "@/lib/format";
 
 export function PricingCalculator() {
   const locations = useQuery({
@@ -56,16 +57,16 @@ export function PricingCalculator() {
     <section id="calculator" className="mx-auto max-w-7xl px-6 py-20">
       <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr]">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[.18em] text-[#bb6b36]">
+          <p className="text-sm font-bold uppercase tracking-[.18em] text-primary">
             Pricing calculator
           </p>
           <h2 className="mt-2 font-serif text-4xl">A first estimate, grounded in your details.</h2>
-          <p className="mt-4 leading-7 text-[#53605d]">
+          <p className="mt-4 leading-7 text-muted-foreground">
             Choose your location, industry, and team size. The API calculates from configured
             database pricing.
           </p>
         </div>
-        <div className="border border-[#203a3a]/15 bg-white p-6">
+        <div className="border border-border bg-card p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-semibold">
               Workers
@@ -111,23 +112,23 @@ export function PricingCalculator() {
           <button
             onClick={() => void calculate()}
             disabled={!locationId || !industryId || !ranges.data?.length || isCalculating}
-            className="mt-6 bg-[#bb6b36] px-6 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-6 bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCalculating ? "Calculating..." : "Calculate estimate"}
           </button>
           {error && (
             <p
               role="alert"
-              className="mt-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+              className="mt-4 border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
             >
               {error}
             </p>
           )}
           {total !== null && (
-            <div className="mt-6 border-t border-[#203a3a]/10 pt-5">
-              <CheckCircle2 className="text-[#bb6b36]" />
-              <p className="mt-2 text-sm text-[#53605d]">Estimated total</p>
-              <p className="font-serif text-4xl">{total.toLocaleString()} PKR</p>
+            <div className="mt-6 border-t border-border pt-5">
+              <CheckCircle2 className="text-primary" />
+              <p className="mt-2 text-sm text-muted-foreground">Estimated total</p>
+              <p className="font-serif text-4xl">{formatMoney(total)}</p>
             </div>
           )}
         </div>

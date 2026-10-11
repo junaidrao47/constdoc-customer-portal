@@ -47,16 +47,16 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#203a3a] px-5 py-10 text-[#203a3a]">
-      <section className="w-full max-w-md border border-white/10 bg-[#f7f3eb] p-7 shadow-2xl sm:p-10">
+    <main className="flex min-h-screen items-center justify-center bg-primary px-5 py-10 text-foreground">
+      <section className="w-full max-w-md border border-primary-foreground/10 bg-background p-7 shadow-2xl sm:p-10">
         <Link href="/" className="font-serif text-2xl font-bold">
-          Const<span className="text-[#bb6b36]">Doc</span>
+          Const<span className="text-primary">Doc</span>
         </Link>
-        <p className="mt-12 text-xs font-bold uppercase tracking-[.18em] text-[#bb6b36]">
+        <p className="mt-12 text-xs font-bold uppercase tracking-[.18em] text-primary">
           Customer portal
         </p>
         <h1 className="mt-3 font-serif text-4xl">Welcome back.</h1>
-        <p className="mt-3 text-sm leading-6 text-[#53605d]">
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
           Sign in to manage your documents, quotations, and compliance milestones.
         </p>
         <form className="mt-8 space-y-5" onSubmit={submit} noValidate>
@@ -73,10 +73,10 @@ export default function LoginPage() {
               type="email"
               aria-invalid={Boolean(errors.email)}
               aria-describedby={errors.email ? "email-error" : undefined}
-              className="mt-2 h-12 w-full border border-[#203a3a]/20 bg-white px-3 outline-none transition focus:border-[#bb6b36] focus:ring-2 focus:ring-[#bb6b36]/20"
+              className="mt-2 h-12 w-full border border-border bg-card px-3 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             {errors.email && (
-              <p id="email-error" className="mt-1 text-xs text-red-700">
+              <p id="email-error" className="mt-1 text-xs text-destructive">
                 {errors.email}
               </p>
             )}
@@ -94,29 +94,32 @@ export default function LoginPage() {
               type="password"
               aria-invalid={Boolean(errors.password)}
               aria-describedby={errors.password ? "password-error" : undefined}
-              className="mt-2 h-12 w-full border border-[#203a3a]/20 bg-white px-3 outline-none transition focus:border-[#bb6b36] focus:ring-2 focus:ring-[#bb6b36]/20"
+              className="mt-2 h-12 w-full border border-border bg-card px-3 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             {errors.password && (
-              <p id="password-error" className="mt-1 text-xs text-red-700">
+              <p id="password-error" className="mt-1 text-xs text-destructive">
                 {errors.password}
               </p>
             )}
           </div>
           {submitError && (
-            <p role="alert" className="border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+            <p
+              role="alert"
+              className="border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+            >
               {submitError}
             </p>
           )}
           <button
             disabled={isSubmitting}
-            className="h-12 w-full bg-[#bb6b36] font-semibold text-white transition hover:bg-[#a85d2d] disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full bg-primary font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? "Signing in..." : "Sign in securely"}
           </button>
         </form>
-        <p className="mt-7 text-sm text-[#53605d]">
+        <p className="mt-7 text-sm text-muted-foreground">
           New customer?{" "}
-          <Link href="/register" className="font-semibold text-[#bb6b36]">
+          <Link href="/register" className="font-semibold text-primary">
             Create an account
           </Link>
         </p>

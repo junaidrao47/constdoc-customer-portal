@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { apiRequest } from "@/lib/api";
 import type { Dashboard } from "@/lib/types";
+import { StatusBadge } from "@/components/status-badge";
 export default function DashboardPage() {
   const dashboard = useQuery({
     queryKey: ["customer-dashboard"],
@@ -10,15 +11,17 @@ export default function DashboardPage() {
   });
   return (
     <div>
-      <p className="text-xs font-bold uppercase tracking-[.18em] text-[#bb6b36]">
+      <p className="text-xs font-bold uppercase tracking-[.18em] text-primary">
         Customer workspace
       </p>
       <h1 className="mt-2 font-serif text-4xl">Your compliance overview</h1>
-      <p className="mt-3 text-[#53605d]">
+      <p className="mt-3 text-muted-foreground">
         A clear view of the files and service milestones that need your attention.
       </p>
       {dashboard.isError && (
-        <p className="mt-8 bg-red-50 p-4 text-sm text-red-800">Unable to load your dashboard.</p>
+        <p className="mt-8 bg-destructive/10 p-4 text-sm text-destructive">
+          Unable to load your dashboard.
+        </p>
       )}
       {dashboard.data && (
         <>
@@ -28,31 +31,29 @@ export default function DashboardPage() {
             <Stat label="Unpaid invoices" value={dashboard.data.attention.unpaidInvoices} />
           </div>
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            <section className="border border-[#203a3a]/10 bg-white p-6">
+            <section className="border border-border bg-card p-6">
               <h2 className="font-serif text-2xl">Recent documents</h2>
               {dashboard.data.documents.map((document) => (
                 <div
-                  className="mt-4 flex items-center justify-between border-b border-[#203a3a]/10 pb-3 text-sm"
+                  className="mt-4 flex items-center justify-between border-b border-border pb-3 text-sm"
                   key={document.id}
                 >
                   <span>{document.fileName}</span>
-                  <span className="text-xs uppercase tracking-wider text-[#bb6b36]">
-                    {document.status.replace("_", " ")}
-                  </span>
+                  <StatusBadge status={document.status} />
                 </div>
               ))}
               <Link
-                className="mt-6 inline-block text-sm font-semibold text-[#bb6b36]"
+                className="mt-6 inline-block text-sm font-semibold text-primary"
                 href="/dashboard/documents"
               >
                 View documents
               </Link>
             </section>
-            <section className="border border-[#203a3a]/10 bg-white p-6">
+            <section className="border border-border bg-card p-6">
               <h2 className="font-serif text-2xl">Billing snapshot</h2>
               {dashboard.data.invoices.map((invoice) => (
                 <div
-                  className="mt-4 flex items-center justify-between border-b border-[#203a3a]/10 pb-3 text-sm"
+                  className="mt-4 flex items-center justify-between border-b border-border pb-3 text-sm"
                   key={String(invoice.id)}
                 >
                   <span>Invoice {String(invoice.id).slice(0, 8)}</span>
@@ -60,7 +61,7 @@ export default function DashboardPage() {
                 </div>
               ))}
               <Link
-                className="mt-6 inline-block text-sm font-semibold text-[#bb6b36]"
+                className="mt-6 inline-block text-sm font-semibold text-primary"
                 href="/dashboard/billing"
               >
                 View billing
@@ -74,8 +75,8 @@ export default function DashboardPage() {
 }
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="border border-[#203a3a]/10 bg-white p-5">
-      <p className="text-sm text-[#53605d]">{label}</p>
+    <div className="border border-border bg-card p-5">
+      <p className="text-sm text-muted-foreground">{label}</p>
       <p className="mt-2 font-serif text-4xl">{value}</p>
     </div>
   );

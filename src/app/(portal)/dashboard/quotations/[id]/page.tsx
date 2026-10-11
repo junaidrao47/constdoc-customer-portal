@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { apiRequest, downloadRequest } from "@/lib/api";
 import type { Quotation } from "@/lib/types";
+import { formatMoney } from "@/lib/format";
 
 export default function QuotationDetailPage() {
   const params = useParams<{ id: string }>();
@@ -14,33 +15,33 @@ export default function QuotationDetailPage() {
   if (quotation.isLoading) return <p>Loading quotation...</p>;
   if (quotation.isError || !quotation.data)
     return (
-      <p className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+      <p className="border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
         Quotation could not be loaded.
       </p>
     );
   const record = quotation.data;
   return (
-    <article className="max-w-2xl border border-[#203a3a]/10 bg-white p-6">
-      <p className="text-xs font-bold uppercase tracking-[.18em] text-[#bb6b36]">
-        Quotation detail
-      </p>
-      <h1 className="mt-2 font-serif text-4xl">PKR {Number(record.totalPrice).toLocaleString()}</h1>
-      <p className="mt-2 text-sm text-[#53605d]">
+    <article className="max-w-2xl border border-border bg-card p-6">
+      <p className="text-xs font-bold uppercase tracking-[.18em] text-primary">Quotation detail</p>
+      <h1 className="mt-2 font-serif text-4xl">
+        {formatMoney(record.totalPrice, record.currency)}
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         Status: {record.status} · {record.workerCount} workers
       </p>
       <div className="mt-8 space-y-3">
         {(record.items ?? []).map((item) => (
           <div
-            className="flex justify-between border-b border-[#203a3a]/10 py-3 text-sm"
+            className="flex justify-between border-b border-border py-3 text-sm"
             key={item.serviceId}
           >
             <span>{item.service?.name ?? item.serviceId}</span>
-            <span>PKR {Number(item.price).toLocaleString()}</span>
+            <span>{formatMoney(item.price, record.currency)}</span>
           </div>
         ))}
       </div>
       <button
-        className="mt-8 bg-[#203a3a] px-5 py-3 text-sm font-semibold text-white"
+        className="mt-8 bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
         onClick={() =>
           void downloadRequest(`/quotations/${record.id}/pdf`, `quotation-${record.id}.pdf`)
         }
