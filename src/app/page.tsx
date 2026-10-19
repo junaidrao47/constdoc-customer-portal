@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { ServicesSection, PackagesSection } from "@/components/catalog-sections";
+import {
+  CatalogError,
+  FeaturedPackagesSection,
+  ServicesSection,
+} from "@/components/catalog-sections";
 import { PricingCalculator } from "@/components/pricing-calculator";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 import { getPublicPackages, getPublicServices } from "@/lib/public-api";
+
+/** See the note on `revalidate` in `/packages`: the real caching is per-fetch. */
+export const revalidate = 300;
 
 export default async function HomePage() {
   const [services, packages] = await Promise.all([getPublicServices(), getPublicPackages()]);
@@ -51,8 +58,21 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <ServicesSection services={services} compact />
-      <PackagesSection packages={packages} compact />
+      {/* A failed section shows its own error rather than blanking the whole page. */}
+      {services.ok ? (
+        <ServicesSection services={services.data} compact />
+      ) : (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <CatalogError message={services.error} />
+        </section>
+      )}
+      {packages.ok ? (
+        <FeaturedPackagesSection packages={packages.data} />
+      ) : (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <CatalogError message={packages.error} />
+        </section>
+      )}
       <PricingCalculator />
       <PublicFooter />
     </main>

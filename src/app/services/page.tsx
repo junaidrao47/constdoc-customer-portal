@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ServicesSection } from "@/components/catalog-sections";
+import { CatalogError, ServicesSection } from "@/components/catalog-sections";
 import { PricingCalculator } from "@/components/pricing-calculator";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
@@ -8,6 +8,9 @@ import { getPublicServices } from "@/lib/public-api";
 export const metadata: Metadata = {
   title: "Services",
 };
+
+/** See the note on `revalidate` in `/packages`: the real caching is per-fetch. */
+export const revalidate = 300;
 
 export default async function ServicesPage() {
   const services = await getPublicServices();
@@ -23,7 +26,13 @@ export default async function ServicesPage() {
           Choose the support your team needs, then use the calculator to shape a first estimate.
         </p>
       </section>
-      <ServicesSection services={services} />
+      {services.ok ? (
+        <ServicesSection services={services.data} />
+      ) : (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <CatalogError message={services.error} />
+        </section>
+      )}
       <PricingCalculator />
       <PublicFooter />
     </main>

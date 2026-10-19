@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { PackagesSection } from "@/components/catalog-sections";
+import {
+  CatalogEmpty,
+  CatalogError,
+  PackageComparisonTable,
+  PackagesSection,
+  QUOTE_HREF,
+} from "@/components/catalog-sections";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 import { getPublicPackages } from "@/lib/public-api";
@@ -8,8 +14,16 @@ export const metadata: Metadata = {
   title: "Packages",
 };
 
+/**
+ * Bounds how stale the catalogue can get. The actual caching comes from the per-request
+ * `next: { revalidate: 60 }` in `public-api.ts`, because Next 16 does not cache `fetch`
+ * by default; this export documents the segment and caps it.
+ */
+export const revalidate = 300;
+
 export default async function PackagesPage() {
-  const packages = await getPublicPackages();
+  const result = await getPublicPackages();
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <PublicHeader />
@@ -24,7 +38,27 @@ export default async function PackagesPage() {
           Compare configured packages and choose a service period that fits your operation.
         </p>
       </section>
-      <PackagesSection packages={packages} />
+
+      {!result.ok ? (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <CatalogError message={result.error} />
+        </section>
+      ) : result.data.length === 0 ? (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <CatalogEmpty
+            title="No packages are published yet."
+            body="You can still price your project from individual services — pick your team size, location and industry and the calculator will give you an estimate."
+            actionHref={QUOTE_HREF}
+            actionLabel="Build an estimate"
+          />
+        </section>
+      ) : (
+        <>
+          <PackagesSection packages={result.data} />
+          <PackageComparisonTable packages={result.data} />
+        </>
+      )}
+
       <PublicFooter />
     </main>
   );

@@ -17,10 +17,18 @@ export interface Service {
   description: string | null;
   basePrice: number;
 }
+/**
+ * A public package. `sortOrder` is deliberately absent: the API orders the list
+ * (`isFeatured DESC, sortOrder ASC, name ASC`) but does not serialise the field, so the
+ * server's array order is the only ordering signal and must be preserved as received.
+ * There is no `currency` either — prices are MXN, per `formatMoney`'s default.
+ */
 export interface Package {
   id: string;
   name: string;
   type: string;
+  description: string | null;
+  isFeatured: boolean;
   price: number;
   durationDays: number;
   services: Service[];
