@@ -1,5 +1,27 @@
 export type DocumentStatus =
-  "pending" | "under_review" | "approved" | "rejected" | "expiring_soon" | "expired";
+  | "pending"
+  | "under_review"
+  | "approved"
+  | "submitted_to_government"
+  | "rejected"
+  | "expiring_soon"
+  | "expired";
+
+/** The localized category embedded on a public service/package. */
+export interface PublicCategoryRef {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+/** A public category with its published item count (`/public/categories`). */
+export interface CategoryWithCount {
+  id: string;
+  name: string;
+  slug: string;
+  serviceCount?: number;
+  packageCount?: number;
+}
 export interface User {
   id: string;
   email: string;
@@ -16,6 +38,7 @@ export interface Service {
   name: string;
   description: string | null;
   basePrice: number;
+  category?: PublicCategoryRef | null;
 }
 /**
  * A public package. `sortOrder` is deliberately absent: the API orders the list
@@ -32,6 +55,7 @@ export interface Package {
   price: number;
   durationDays: number;
   services: Service[];
+  category?: PublicCategoryRef | null;
 }
 export interface CatalogCategory {
   id: string;
@@ -103,6 +127,51 @@ export interface DocumentRecord {
   approvedDownloadUrl?: string | null;
   approvedUploadedAt?: string | null;
 }
+export type DocumentVersionKind = "customer" | "staff_on_behalf" | "official";
+export interface DocumentVersion {
+  id: string;
+  versionNo: number;
+  kind: DocumentVersionKind;
+  fileName: string;
+  mimeType: string | null;
+  sizeBytes: number | null;
+  status: "intent" | "ready";
+  createdAt: string;
+}
+export interface DocumentHistoryEntry {
+  id: string;
+  fromStatus: DocumentStatus | null;
+  toStatus: DocumentStatus;
+  note: string | null;
+  createdAt: string;
+  changedBy: { id: string; name?: string | null; email: string } | null;
+}
+export interface StatusContract {
+  statuses: { value: DocumentStatus; key: string; terminal: boolean }[];
+  transitionsByRole: Record<string, Partial<Record<DocumentStatus, DocumentStatus[]>>>;
+}
+export interface ChecklistRequirement {
+  id: string;
+  name: string | null;
+  description: string | null;
+  isRequired: boolean;
+  documentId: string | null;
+  status: DocumentStatus | null;
+  submitted: boolean;
+}
+export interface ChecklistService {
+  serviceId: string;
+  serviceName: string | null;
+  requirements: ChecklistRequirement[];
+  completion: number;
+}
+export interface Checklist {
+  services: ChecklistService[];
+  completion: number;
+  requiredTotal: number;
+  requiredSubmitted: number;
+}
+
 export interface Dashboard {
   profile: User;
   stats: Record<string, number>;

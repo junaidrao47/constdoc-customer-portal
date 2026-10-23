@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
-import { CatalogError, ServicesSection } from "@/components/catalog-sections";
+import { CatalogBrowser } from "@/components/catalog-browser";
 import { PricingCalculator } from "@/components/pricing-calculator";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
-import { getPublicServices } from "@/lib/public-api";
+import { getPublicCategories } from "@/lib/public-api";
+import { getServerLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -13,11 +15,13 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function ServicesPage() {
-  const services = await getPublicServices();
+  const locale = await getServerLocale();
+  const categories = await getPublicCategories(locale);
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <PublicHeader />
-      <section className="mx-auto max-w-7xl px-6 pb-6 pt-16">
+      <section className="mx-auto max-w-7xl px-6 pb-2 pt-16">
         <p className="text-sm font-bold uppercase tracking-[.18em] text-primary">What we handle</p>
         <h1 className="mt-3 max-w-3xl font-serif text-5xl leading-tight sm:text-6xl">
           Practical compliance support for active projects.
@@ -26,13 +30,9 @@ export default async function ServicesPage() {
           Choose the support your team needs, then use the calculator to shape a first estimate.
         </p>
       </section>
-      {services.ok ? (
-        <ServicesSection services={services.data} />
-      ) : (
-        <section className="mx-auto max-w-7xl px-6 py-16">
-          <CatalogError message={services.error} />
-        </section>
-      )}
+      <Suspense fallback={null}>
+        <CatalogBrowser kind="services" categories={categories.ok ? categories.data : []} locale={locale} />
+      </Suspense>
       <PricingCalculator />
       <PublicFooter />
     </main>

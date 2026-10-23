@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "ConstDoc", template: "%s · ConstDoc" },
-  description: "Construction compliance and document management",
+  title: { default: "Grupo G2H — Servicios Integrales", template: "%s · Grupo G2H" },
+  description: "Grupo G2H · Servicios Integrales — construction document and compliance management.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

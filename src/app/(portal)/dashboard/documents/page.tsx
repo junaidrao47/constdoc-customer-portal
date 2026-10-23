@@ -2,227 +2,194 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ApiError, apiRequest, downloadRequest } from "@/lib/api";
-import type { DocumentRecord } from "@/lib/types";
+import { apiRequest } from "@/lib/api";
+import { messageForError } from "@/lib/errors";
+import { useLocale } from "@/lib/use-locale";
+import { t } from "@/lib/messages";
+import type { Checklist, DocumentRecord } from "@/lib/types";
 import { StatusBadge } from "@/components/status-badge";
+import { DocumentDetail } from "@/components/document-detail";
+import { UploadDropzone } from "@/components/upload-dropzone";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-const MAX_BYTES = 25 * 1024 * 1024;
-const ALLOWED = [
-  ".pdf",
-  ".doc",
-  ".docx",
-  ".xls",
-  ".xlsx",
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".webp",
-  ".tif",
-  ".tiff",
-];
-
-type DownloadVersion = "original" | "approved";
-type DownloadTarget = { downloadUrl: string; downloadMode: "s3" | "local" };
+function ProgressBar({ value }: { value: number }) {
+  return (
+    <div className="h-2 w-full overflow-hidden rounded bg-muted" role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
+      <div className="h-full bg-primary transition-all" style={{ width: `${value}%` }} />
+    </div>
+  );
+}
 
 export default function DocumentsPage() {
+  const locale = useLocale();
+  const [selected, setSelected] = useState<DocumentRecord | null>(null);
+
+  const checklist = useQuery({
+    queryKey: ["customer-checklist"],
+    queryFn: () => apiRequest<Checklist>("/customers/me/checklist"),
+  });
   const documents = useQuery({
     queryKey: ["customer-documents"],
     queryFn: () => apiRequest<DocumentRecord[]>("/customers/me/documents"),
   });
-  const [file, setFile] = useState<File | null>(null);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
 
-  async function upload() {
-    if (!file) return;
-    setMessage("");
-    setError("");
-    const extension = `.${file.name.split(".").pop()?.toLowerCase() ?? ""}`;
-    if (!ALLOWED.includes(extension)) {
-      setError(`This file type is not supported. Allowed: ${ALLOWED.join(", ")}`);
-      return;
-    }
-    if (file.size === 0) {
-      setError("The selected file is empty.");
-      return;
-    }
-    if (file.size > MAX_BYTES) {
-      setError("Files must be 25MB or smaller.");
-      return;
-    }
-    setIsUploading(true);
-    try {
-      setMessage("Preparing secure upload...");
-      const target = await apiRequest<{
-        document: DocumentRecord;
-        uploadMode: string;
-        uploadUrl: string;
-        uploadMethod: string;
-        uploadHeaders?: Record<string, string>;
-      }>("/documents/upload-url", {
-        method: "POST",
-        body: JSON.stringify({
-          fileName: file.name,
-          contentType: file.type || "application/octet-stream",
-        }),
-      });
-      if (target.uploadMethod === "PUT") {
-        const response = await fetch(target.uploadUrl, {
-          method: "PUT",
-          headers: target.uploadHeaders,
-          body: file,
-        });
-        if (!response.ok) throw new Error("Secure storage rejected the upload. Please try again.");
-      } else {
-        const body = new FormData();
-        body.append("file", file);
-        await apiRequest(`/documents/${target.document.id}/upload`, { method: "POST", body });
-      }
-      setMessage("Document uploaded successfully and is awaiting review.");
-      setFile(null);
-      void documents.refetch();
-    } catch (cause) {
-      setMessage("");
-      setError(
-        cause instanceof ApiError || cause instanceof Error
-          ? cause.message
-          : "Upload failed. Please try again.",
-      );
-    } finally {
-      setIsUploading(false);
-    }
-  }
+  const docs = documents.data ?? [];
+  const docById = new Map(docs.map((doc) => [doc.id, doc]));
 
-  /**
-   * Local storage serves files from an authenticated API route, which a plain link
-   * cannot reach (no Bearer header). S3 mode returns a presigned URL that must be
-   * opened directly, because S3 rejects an extra Authorization header.
-   */
-  async function download(document: DocumentRecord, version: DownloadVersion) {
-    setError("");
-    const approved = version === "approved";
-    try {
-      const target = await apiRequest<DownloadTarget>(
-        approved
-          ? `/documents/${document.id}/approved-download-url`
-          : `/documents/${document.id}/download-url`,
-      );
-      if (target.downloadMode === "s3") {
-        window.open(target.downloadUrl, "_blank", "noopener");
-        return;
-      }
-      await downloadRequest(
-        approved
-          ? `/documents/${document.id}/download?version=approved`
-          : `/documents/${document.id}/download`,
-        (approved ? document.approvedFileName : null) ?? document.fileName,
-      );
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "The download could not be completed.");
-    }
-  }
-
-  const listItems = documents.data ?? [];
   return (
     <div>
       <p className="text-xs font-bold uppercase tracking-[.18em] text-primary">Document centre</p>
       <h1 className="mt-2 font-serif text-4xl">Your compliance files</h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-        Files are uploaded through a protected route and reviewed by your compliance team.
+        Upload each required document, track its review, and download the approved file when it is
+        ready.
       </p>
-      <section className="mt-8 border border-dashed border-primary/40 bg-card p-6">
-        <h2 className="font-serif text-2xl">Add a document</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          PDF, office files, and images up to 25MB.
-        </p>
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <input
-            type="file"
-            disabled={isUploading}
-            onChange={(event) => {
-              setFile(event.target.files?.[0] ?? null);
-              setError("");
-              setMessage("");
-            }}
-            accept={ALLOWED.join(",")}
-            className="max-w-full text-sm"
-          />
-          <button
-            disabled={!file || isUploading}
-            onClick={() => void upload()}
-            className="bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isUploading ? "Uploading securely..." : "Upload securely"}
-          </button>
+
+      {/* Checklist */}
+      <section className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="font-serif text-2xl">{t(locale, "doc.checklist")}</h2>
+          {checklist.data && (
+            <span className="text-sm text-muted-foreground">{checklist.data.completion}%</span>
+          )}
         </div>
-        {error && (
-          <p
-            role="alert"
-            className="mt-4 border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-          >
-            {error}
-          </p>
+        {checklist.data && (
+          <div className="mt-3">
+            <ProgressBar value={checklist.data.completion} />
+          </div>
         )}
-        {message && (
-          <p
-            role="status"
-            className="mt-4 border border-success/30 bg-success/10 p-3 text-sm text-success"
-          >
-            {message}
-          </p>
+        {checklist.isLoading && (
+          <p className="mt-4 text-sm text-muted-foreground">{t(locale, "state.loading")}</p>
         )}
-      </section>
-      <section className="mt-8 border border-border bg-card p-6">
-        <h2 className="font-serif text-2xl">Uploaded files</h2>
-        {documents.isError && (
+        {checklist.isError && (
           <p role="alert" className="mt-4 text-sm text-destructive">
-            {documents.error instanceof Error
-              ? documents.error.message
-              : "Files could not be loaded."}
+            {messageForError(checklist.error, locale)}
           </p>
         )}
-        {documents.isLoading && (
-          <p className="mt-4 text-sm text-muted-foreground">Loading your files...</p>
+        {checklist.isSuccess && checklist.data.services.length === 0 && (
+          <p className="mt-4 text-sm text-muted-foreground">
+            {locale === "en"
+              ? "No required documents yet. Your advisor will add them once a service is active."
+              : "Aún no hay documentos requeridos. Tu asesor los agregará cuando haya un servicio activo."}
+          </p>
         )}
-        <div className="mt-5 space-y-3">
-          {listItems.map((document) => (
-            <div
-              className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3"
-              key={document.id}
-            >
-              <div>
-                <p className="font-medium">{document.fileName}</p>
-                <p className="text-xs text-muted-foreground">
-                  Added {new Date(document.createdAt).toLocaleDateString()}
-                </p>
-                {document.status && <StatusBadge status={document.status} className="mt-1" />}
+
+        <div className="mt-6 grid gap-6">
+          {checklist.data?.services.map((service) => (
+            <div key={service.serviceId} className="border border-border bg-card p-5">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-serif text-xl">{service.serviceName}</h3>
+                <span className="text-sm text-muted-foreground">{service.completion}%</span>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => void download(document, "original")}
-                  className="bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
-                >
-                  Download original
-                </button>
-                {document.approvedDownloadUrl && (
-                  <button
-                    type="button"
-                    onClick={() => void download(document, "approved")}
-                    className="border border-success/30 bg-success/10 px-3 py-2 text-xs font-semibold text-success"
-                  >
-                    Download approved
-                  </button>
-                )}
+              <div className="mt-2">
+                <ProgressBar value={service.completion} />
               </div>
+              <ul className="mt-4 grid gap-3">
+                {service.requirements.map((requirement) => {
+                  const doc = requirement.documentId ? docById.get(requirement.documentId) : null;
+                  return (
+                    <li key={requirement.id} className="border-t border-border pt-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p className="font-medium">
+                            {requirement.name}
+                            {!requirement.isRequired && (
+                              <span className="ml-2 text-xs text-muted-foreground">(optional)</span>
+                            )}
+                          </p>
+                          {requirement.description && (
+                            <p className="text-sm text-muted-foreground">{requirement.description}</p>
+                          )}
+                        </div>
+                        <StatusBadge
+                          status={requirement.status ?? (requirement.submitted ? "under_review" : "pending")}
+                          locale={locale}
+                        />
+                      </div>
+                      {requirement.submitted && doc ? (
+                        <button
+                          type="button"
+                          onClick={() => setSelected(doc)}
+                          className="mt-2 text-sm font-semibold text-primary"
+                        >
+                          {t(locale, "doc.timeline")} →
+                        </button>
+                      ) : (
+                        <div className="mt-3">
+                          <UploadDropzone
+                            mode="new"
+                            serviceId={service.serviceId}
+                            requirementId={requirement.id}
+                            onComplete={() => {
+                              void checklist.refetch();
+                              void documents.refetch();
+                            }}
+                          />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           ))}
         </div>
-        {documents.isSuccess && listItems.length === 0 && (
-          <p className="mt-5 text-sm text-muted-foreground">No documents uploaded yet.</p>
+      </section>
+
+      {/* All documents */}
+      <section className="mt-10 border border-border bg-card p-6">
+        <h2 className="font-serif text-2xl">{t(locale, "doc.versions")}</h2>
+        {documents.isLoading && (
+          <p className="mt-4 text-sm text-muted-foreground">{t(locale, "state.loading")}</p>
+        )}
+        {documents.isError && (
+          <p role="alert" className="mt-4 text-sm text-destructive">
+            {messageForError(documents.error, locale)}
+          </p>
+        )}
+        <div className="mt-5 space-y-3">
+          {docs.map((doc) => (
+            <div
+              key={doc.id}
+              className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3"
+            >
+              <div>
+                <p className="font-medium">{doc.fileName}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(doc.createdAt).toLocaleDateString()}
+                </p>
+                <StatusBadge status={doc.status} locale={locale} className="mt-1" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelected(doc)}
+                className="bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+              >
+                {t(locale, "doc.timeline")}
+              </button>
+            </div>
+          ))}
+        </div>
+        {documents.isSuccess && docs.length === 0 && (
+          <p className="mt-5 text-sm text-muted-foreground">{t(locale, "doc.noDocuments")}</p>
         )}
       </section>
+
+      <Sheet open={Boolean(selected)} onOpenChange={(open) => !open && setSelected(null)}>
+        <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+          <SheetHeader>
+            <SheetTitle className="truncate">{selected?.fileName}</SheetTitle>
+          </SheetHeader>
+          <div className="px-4">
+            {selected && (
+              <DocumentDetail
+                document={docById.get(selected.id) ?? selected}
+                locale={locale}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
