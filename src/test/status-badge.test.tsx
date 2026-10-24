@@ -10,9 +10,11 @@ describe("StatusBadge", () => {
     expect(screen.getByText("Enviado al gobierno")).toBeInTheDocument();
   });
 
-  it("localizes core document statuses", () => {
-    render(<StatusBadge status="rejected" locale="es" />);
+  it("localizes core document statuses from the i18n catalog", () => {
+    const { rerender } = render(<StatusBadge status="rejected" locale="es" />);
     expect(screen.getByText("Rechazado")).toBeInTheDocument();
+    rerender(<StatusBadge status="under_review" locale="en" />);
+    expect(screen.getByText("Under review")).toBeInTheDocument();
   });
 
   it("humanizes an unknown status rather than showing a raw token", () => {

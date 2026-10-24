@@ -63,6 +63,7 @@ describe("package cards", () => {
   it("shows the Featured badge only on featured packages", () => {
     render(
       <PackagesSection
+        locale="en"
         packages={[
           makePackage({ id: "a", name: "Starter", isFeatured: false }),
           makePackage({ id: "b", name: "Pro", isFeatured: true }),
@@ -73,8 +74,8 @@ describe("package cards", () => {
     // Both cards render...
     expect(screen.getByRole("heading", { name: "Starter" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Pro" })).toBeInTheDocument();
-    // ...but only the featured one carries the badge.
-    expect(screen.getAllByText("Featured")).toHaveLength(1);
+    // ...but only the featured one carries the ribbon ("★ Featured").
+    expect(screen.getAllByText(/Featured/)).toHaveLength(1);
   });
 });
 
@@ -97,9 +98,9 @@ describe("featured packages section", () => {
       makePackage({ id: `p-${i}`, name: `Package ${i}`, isFeatured: true }),
     );
 
-    render(<FeaturedPackagesSection packages={packages} />);
+    render(<FeaturedPackagesSection locale="en" packages={packages} />);
 
-    // Each card has its own "Get a quote" call to action.
-    expect(screen.getAllByRole("link", { name: "Get a quote" })).toHaveLength(3);
+    // Capped at three cards, each with its own "View package" call to action.
+    expect(screen.getAllByRole("link", { name: /View package/i })).toHaveLength(3);
   });
 });
