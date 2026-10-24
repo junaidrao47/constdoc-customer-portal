@@ -10,6 +10,19 @@ import {
 } from "./api";
 import type { Session } from "./types";
 const KEY = "constdoc.customer.session";
+
+/**
+ * A non-HttpOnly presence flag the Next proxy (src/proxy.ts) can read to guard
+ * /dashboard and /onboarding — the Bearer tokens live in sessionStorage, which the
+ * edge proxy cannot see. The cookie carries NO token, only "a session exists here".
+ */
+const AUTH_COOKIE = "constdoc.customer.authed";
+function setAuthCookie(present: boolean): void {
+  if (typeof document === "undefined") return;
+  document.cookie = present
+    ? `${AUTH_COOKIE}=1; path=/; samesite=lax; max-age=86400`
+    : `${AUTH_COOKIE}=; path=/; samesite=lax; max-age=0`;
+}
 type Auth = {
   session: Session | null;
   isLoading: boolean;
@@ -24,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const save = (next: Session) => {
     setSession(next);
     sessionStorage.setItem(KEY, JSON.stringify(next));
+    setAuthCookie(true);
   };
   const refresh = useCallback(async () => {
     if (!session?.refreshToken) return null;
@@ -34,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setSession(null);
       sessionStorage.removeItem(KEY);
+      setAuthCookie(false);
       return null;
     }
   }, [session]);
@@ -42,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (value) {
       try {
         setSession(JSON.parse(value) as Session);
+        setAuthCookie(true);
       } catch {
         sessionStorage.removeItem(KEY);
       }
@@ -70,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const refreshToken = session?.refreshToken;
         setSession(null);
         sessionStorage.removeItem(KEY);
+        setAuthCookie(false);
         if (refreshToken) {
           try {
             await logoutRequest(refreshToken);
