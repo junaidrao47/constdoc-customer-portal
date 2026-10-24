@@ -94,11 +94,11 @@ export function PricingCalculator() {
           </p>
           <h2 className="mt-2 font-serif text-4xl">A first estimate, grounded in your details.</h2>
           <p className="mt-4 leading-7 text-muted-foreground">
-            Choose your location, industry, team size, and the services you need. The API
-            calculates from configured database pricing.
+            Choose your location, industry, team size, and the services you need, and we&apos;ll
+            show an estimated total in MXN.
           </p>
         </div>
-        <div className="border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-[var(--elev-2)]">
           {depsError && (
             <p
               role="alert"
@@ -210,9 +210,9 @@ export function PricingCalculator() {
           <button
             onClick={() => void calculate()}
             disabled={!locationId || !industryId || !ranges.data?.length || isCalculating}
-            className="mt-6 bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="heading mt-6 inline-flex items-center justify-center rounded-md bg-accent px-6 py-3 text-sm uppercase tracking-wide text-paper shadow-[var(--elev-2)] transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-steel disabled:text-paper/80 disabled:shadow-none"
           >
-            {isCalculating ? "Calculating..." : "Calculate estimate"}
+            {isCalculating ? "Calculating…" : "Calculate estimate"}
           </button>
           {error && (
             <p

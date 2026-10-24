@@ -1,32 +1,59 @@
 @import "tailwindcss";
 
 /*
- * ConstDoc design tokens. Shared verbatim with admin-frontend/src/app/globals.css;
- * change both together. Light theme only. Colours are referenced through the
- * Tailwind names below (bg-primary, text-muted-foreground, ...), never as hex in JSX.
+ * Grupo G2H public-site design system. Light theme.
+ * Brand palette (ink / graphite / steel / concrete / paper / accent) is defined first,
+ * then the shadcn semantic tokens are mapped onto it. Colours are referenced through the
+ * Tailwind names (bg-primary, bg-ink, text-muted-foreground, ...), never as hex in JSX.
+ * Shared in spirit with admin-frontend; the public brand lives here.
  */
 :root {
-  --radius: 0.5rem;
-  --background: #f7f8fa;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #1f3a5f;
+  /* brand palette */
+  --ink: #15171a;
+  --graphite: #2b2f33;
+  --steel: #8a9099;
+  --concrete: #eceae6;
+  --paper: #ffffff;
+  --accent: #e8590c;
+  --accent-hover: #c94a08;
+
+  /* radii */
+  --radius: 12px;
+  --radius-tight: 6px;
+  --radius-round: 20px;
+
+  /* elevation — soft, layered */
+  --elev-1: 0 1px 2px rgba(21, 23, 26, 0.06), 0 1px 1px rgba(21, 23, 26, 0.04);
+  --elev-2: 0 2px 6px rgba(21, 23, 26, 0.08), 0 4px 12px rgba(21, 23, 26, 0.05);
+  --elev-3: 0 6px 16px rgba(21, 23, 26, 0.10), 0 12px 28px rgba(21, 23, 26, 0.07);
+  --elev-4: 0 12px 32px rgba(21, 23, 26, 0.14), 0 24px 60px rgba(21, 23, 26, 0.10);
+
+  /* motion */
+  --dur-fast: 150ms;
+  --dur-mid: 300ms;
+  --dur-slow: 600ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* shadcn semantic tokens mapped onto the brand palette */
+  --background: var(--concrete);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--accent);
   --primary-foreground: #ffffff;
-  --secondary: #eef1f5;
-  --secondary-foreground: #0f172a;
-  --muted: #eef1f5;
-  --muted-foreground: #5b6474;
-  --accent: #f2a93b;
-  --accent-foreground: #1a1a1a;
+  --secondary: #e4e2dd;
+  --secondary-foreground: var(--ink);
+  --muted: #e4e2dd;
+  --muted-foreground: #5c6066;
+  --accent-foreground: #ffffff;
   --destructive: #b42318;
   --success: #067647;
   --warning: #b54708;
-  --border: #dde2ea;
-  --input: #dde2ea;
-  --ring: #1f3a5f;
+  --border: #d9d6cf;
+  --input: #d9d6cf;
+  --ring: var(--accent);
 }
 
 @theme inline {
@@ -44,17 +71,31 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
   --color-destructive: var(--destructive);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+
+  /* brand utilities: bg-ink, text-steel, bg-concrete, ... */
+  --color-ink: var(--ink);
+  --color-graphite: var(--graphite);
+  --color-steel: var(--steel);
+  --color-concrete: var(--concrete);
+  --color-paper: var(--paper);
+
+  --radius-sm: var(--radius-tight);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: var(--font-geist-sans);
+  --radius-xl: var(--radius-round);
+
+  /* Inter body, Roboto Condensed headings. --font-serif points at the heading face so the
+     old `font-serif` usages (incl. the dashboard) pick it up with no per-file edits. */
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading-face);
+  --font-serif: var(--font-heading-face);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -62,10 +103,91 @@
   * {
     border-color: var(--border);
   }
-
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   }
+  h1, h2, h3, .font-heading {
+    font-family: var(--font-heading-face), "Arial Narrow", system-ui, sans-serif;
+  }
+}
+
+/* Heading treatment: Roboto Condensed, slightly open tracking. Opt-in utility. */
+.heading {
+  font-family: var(--font-heading-face), "Arial Narrow", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+.eyebrow {
+  font-family: var(--font-heading-face), "Arial Narrow", system-ui, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* Faint blueprint grid for dark bands (Turner-style). */
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+/* Scroll reveal. The useReveal hook adds `reveal-init` only after mount, so no-JS and
+   reduced-motion render fully visible. */
+.reveal-init { opacity: 0; transform: translateY(24px); }
+.reveal-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+.ken-burns { animation: kenburns 18s var(--ease) forwards; }
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+.rise { opacity: 0; animation: rise-in var(--dur-slow) var(--ease) forwards; }
+
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.marquee-track { display: flex; width: max-content; will-change: transform; }
+.marquee-left { animation: marquee-left 46s linear infinite; }
+.marquee-right { animation: marquee-right 52s linear infinite; }
+.marquee-row:hover .marquee-track { animation-play-state: paused; }
+
+/* Brand loader: the cube's three faces pulse in sequence (a light sweep that reads
+   as "assembling"), while the whole mark gently floats. See <BrandLoader>. */
+@keyframes mk-pulse { 0%, 100% { opacity: 0.32; } 45% { opacity: 1; } }
+@keyframes mk-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7%); } }
+.brand-loader { animation: mk-float 3s var(--ease) infinite; transform-origin: center; will-change: transform; }
+.brand-loader .mk-f1 { animation: mk-pulse 1.5s var(--ease) infinite; }
+.brand-loader .mk-f2 { animation: mk-pulse 1.5s var(--ease) 0.18s infinite; }
+.brand-loader .mk-f3 { animation: mk-pulse 1.5s var(--ease) 0.36s infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-init { opacity: 1; transform: none; }
+  .reveal-in { transition: none; }
+  .ken-burns, .rise { animation: none; opacity: 1; transform: none; }
+  .marquee-left, .marquee-right { animation: none; }
+  .brand-loader, .brand-loader .mk-f1, .brand-loader .mk-f2, .brand-loader .mk-f3 {
+    animation: none; opacity: 1; transform: none;
+  }
+  /* static, centered, wrapped grid instead of a scrolling strip */
+  .marquee-track { flex-wrap: wrap; width: auto; justify-content: center; }
+  .marquee-dupe { display: none; }
 }

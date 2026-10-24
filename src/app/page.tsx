@@ -1,79 +1,54 @@
-import Link from "next/link";
-import { ArrowRight, ShieldCheck } from "lucide-react";
-import {
-  CatalogError,
-  FeaturedPackagesSection,
-  ServicesSection,
-} from "@/components/catalog-sections";
+import { CatalogError, FeaturedPackagesSection, ServicesSection } from "@/components/catalog-sections";
+import { Hero } from "@/components/home/hero";
+import { HowItWorks } from "@/components/home/how-it-works";
+import { StatsBand } from "@/components/home/stats";
+import { FaqTeaser } from "@/components/home/faq-teaser";
+import { FinalCta } from "@/components/home/final-cta";
 import { PricingCalculator } from "@/components/pricing-calculator";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
+import { TrustBand } from "@/components/trust-band";
 import { getPublicPackages, getPublicServices } from "@/lib/public-api";
+import { getServerLocale } from "@/lib/locale";
 
-/** See the note on `revalidate` in `/packages`: the real caching is per-fetch. */
+/** The real caching is per-fetch in `public-api.ts`; this caps how stale the segment can get. */
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [services, packages] = await Promise.all([getPublicServices(), getPublicPackages()]);
+  const locale = await getServerLocale();
+  const [services, packages] = await Promise.all([
+    getPublicServices(locale),
+    getPublicPackages(locale),
+  ]);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="flex min-h-screen flex-col bg-background text-foreground">
       <PublicHeader />
-      <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
-        <div>
-          <p className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[.18em] text-primary">
-            <ShieldCheck size={16} /> Construction compliance, made clear
-          </p>
-          <h1 className="max-w-3xl font-serif text-5xl leading-[1.02] sm:text-7xl">
-            Keep every project ready for the next inspection.
-          </h1>
-          <p className="mt-7 max-w-xl text-lg leading-8 text-muted-foreground">
-            A calm, accountable workspace for documents, services, quotations, and compliance
-            milestones.
-          </p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <Link
-              href="/services#calculator"
-              className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
-            >
-              Calculate estimate <ArrowRight size={17} />
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-full border border-border px-6 py-3 font-semibold"
-            >
-              Create account
-            </Link>
-          </div>
-        </div>
-        <div className="min-h-[390px] rounded-[2rem] bg-primary p-8 text-primary-foreground shadow-xl">
-          <div className="flex h-full flex-col justify-between">
-            <ShieldCheck size={42} className="text-accent" />
-            <div>
-              <p className="text-sm text-primary-foreground/60">One accountable place</p>
-              <p className="mt-2 max-w-sm font-serif text-4xl leading-tight">
-                From first quote to approved file.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* A failed section shows its own error rather than blanking the whole page. */}
+      <Hero />
+      <TrustBand />
+
       {services.ok ? (
-        <ServicesSection services={services.data} compact />
+        <ServicesSection services={services.data} compact locale={locale} />
       ) : (
         <section className="mx-auto max-w-7xl px-6 py-16">
           <CatalogError message={services.error} />
         </section>
       )}
+
+      <HowItWorks />
+
       {packages.ok ? (
-        <FeaturedPackagesSection packages={packages.data} />
+        <FeaturedPackagesSection packages={packages.data} locale={locale} />
       ) : (
         <section className="mx-auto max-w-7xl px-6 py-16">
           <CatalogError message={packages.error} />
         </section>
       )}
+
+      <StatsBand />
       <PricingCalculator />
+      <FaqTeaser />
+      <FinalCta />
       <PublicFooter />
     </main>
   );
