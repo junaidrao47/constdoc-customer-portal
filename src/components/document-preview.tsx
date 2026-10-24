@@ -12,6 +12,7 @@ const KIND_LABEL: Record<string, string> = {
   customer: "You",
   staff_on_behalf: "Staff",
   official: "Official",
+  phase_result: "Result",
 };
 
 /** One version row: metadata plus inline preview (PDF/image) and an authenticated download. */

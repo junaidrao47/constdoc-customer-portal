@@ -22,16 +22,78 @@ export interface CategoryWithCount {
   serviceCount?: number;
   packageCount?: number;
 }
+export type AccountStatus = "pending_approval" | "approved" | "suspended";
 export interface User {
   id: string;
   email: string;
   name?: string | null;
   role: string;
+  /** Approval gate (§11.1). Absent on older sessions — treat a missing value as approved. */
+  accountStatus?: AccountStatus;
+  preferredLocale?: string | null;
 }
 export interface Session {
   user: User;
   accessToken: string;
   refreshToken: string;
+}
+
+/** The customer's assigned manager, exposed on the dashboard (§11.8). */
+export interface ManagerSummary {
+  id: string;
+  name: string | null;
+  email: string;
+}
+
+export type PhaseStatus = "not_started" | "in_progress" | "completed" | "rejected";
+export interface PhaseProgress {
+  completed: number;
+  total: number;
+  percent: number;
+}
+/** One approval phase of a document (§11.5). The customer view is read-only. */
+export interface DocumentPhase {
+  id: string;
+  documentId: string;
+  position: number;
+  nameEn: string;
+  nameEs: string;
+  department: string | null;
+  targetDate: string | null;
+  status: PhaseStatus;
+  completedAt: string | null;
+  completedBy: string | null;
+  note: string | null;
+  resultVersionId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+/** GET /documents/:id — a single document with its phases and progress. */
+export interface DocumentDetail extends DocumentRecord {
+  customerId: string;
+  serviceId: string | null;
+  targetDate: string | null;
+  previewUrl?: string;
+  phases: DocumentPhase[];
+  progress: PhaseProgress;
+}
+
+/** Onboarding profile (§11.4). GET/PUT /customers/me/onboarding. */
+export interface Onboarding {
+  persona: string | null;
+  legalName: string | null;
+  contactName: string | null;
+  notificationEmails: string[];
+  phone: string | null;
+  state: string | null;
+  city: string | null;
+  needs: string[];
+  completedAt: string | null;
+  completed: boolean;
+}
+export interface OnboardingResponse {
+  onboarding: Onboarding;
+  personas: string[];
 }
 export interface Service {
   id: string;
@@ -54,6 +116,8 @@ export interface Package {
   isFeatured: boolean;
   price: number;
   durationDays: number;
+  /** Per-package marketing image from the admin upload; null falls back to the category image. */
+  imageUrl?: string | null;
   services: Service[];
   category?: PublicCategoryRef | null;
 }
@@ -127,7 +191,23 @@ export interface DocumentRecord {
   approvedDownloadUrl?: string | null;
   approvedUploadedAt?: string | null;
 }
-export type DocumentVersionKind = "customer" | "staff_on_behalf" | "official";
+/** A row from GET /customers/me/documents, enriched with phase/service summary (§11.6). */
+export interface CustomerServiceRef {
+  id: string;
+  nameEn: string;
+  nameEs: string;
+}
+export interface CustomerDocument extends DocumentRecord {
+  customerId: string;
+  serviceId: string | null;
+  service: CustomerServiceRef | null;
+  targetDate: string | null;
+  nextTargetDate: string | null;
+  progress: PhaseProgress;
+  phaseStatuses: PhaseStatus[];
+}
+
+export type DocumentVersionKind = "customer" | "staff_on_behalf" | "official" | "phase_result";
 export interface DocumentVersion {
   id: string;
   versionNo: number;
@@ -175,7 +255,8 @@ export interface Checklist {
 export interface Dashboard {
   profile: User;
   stats: Record<string, number>;
-  documents: DocumentRecord[];
+  manager: ManagerSummary | null;
+  documents: CustomerDocument[];
   subscriptions: Array<Record<string, string>>;
   invoices: Array<Record<string, string | number | null>>;
   attention: { documents: number; unpaidInvoices: number };

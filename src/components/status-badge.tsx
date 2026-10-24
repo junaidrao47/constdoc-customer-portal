@@ -1,14 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { Locale } from "@/lib/messages";
+import { tOptional, type Locale } from "@/lib/messages";
 
 type Tone = "success" | "warning" | "danger" | "neutral";
 
 /**
  * Colour per status. The *set* of document statuses and the allowed transitions are owned
  * by the API (`GET /documents/statuses`) and drive the action buttons — never a hardcoded
- * list. Colours are not part of that contract, so this tone map (and the localized labels
- * below) is the only presentation detail that stays local. Unknown statuses humanise.
+ * list. Labels are resolved through i18n keyed by the same `document.status.<value>` key the
+ * contract publishes (see messages.ts). Colour is not part of that contract — the backend
+ * states it is the frontend's job — so this tone map is the only presentation detail that
+ * stays local. Unknown statuses humanise.
  */
 const TONE: Record<string, Tone> = {
   pending: "neutral",
@@ -28,27 +30,13 @@ const TONE: Record<string, Tone> = {
   partially_paid: "warning",
   paid: "success",
   overdue: "danger",
-};
-
-const LABELS: Record<Locale, Record<string, string>> = {
-  es: {
-    pending: "Pendiente",
-    under_review: "En revisión",
-    approved: "Aprobado",
-    submitted_to_government: "Enviado al gobierno",
-    rejected: "Rechazado",
-    expiring_soon: "Por vencer",
-    expired: "Vencido",
-  },
-  en: {
-    pending: "Pending",
-    under_review: "Under review",
-    approved: "Approved",
-    submitted_to_government: "Submitted to government",
-    rejected: "Rejected",
-    expiring_soon: "Expiring soon",
-    expired: "Expired",
-  },
+  // account statuses (§11.1)
+  pending_approval: "warning",
+  suspended: "danger",
+  // phase statuses (§11.5)
+  not_started: "neutral",
+  in_progress: "warning",
+  completed: "success",
 };
 
 const TONE_CLASSES: Record<Tone, string> = {
@@ -61,13 +49,16 @@ const TONE_CLASSES: Record<Tone, string> = {
 export function StatusBadge({
   status,
   locale = "es",
+  prefix = "document.status",
   className,
 }: {
   status: string;
   locale?: Locale;
+  /** i18n key namespace for the label, e.g. "phase.status" or "account.status". */
+  prefix?: string;
   className?: string;
 }) {
-  const label = LABELS[locale][status] ?? status.replaceAll("_", " ");
+  const label = tOptional(locale, `${prefix}.${status}`) ?? status.replaceAll("_", " ");
   const tone = TONE[status] ?? "neutral";
   return (
     <Badge variant="outline" className={cn("border-transparent", TONE_CLASSES[tone], className)}>
