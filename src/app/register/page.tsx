@@ -89,7 +89,7 @@ export default function RegisterPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-5 py-10 text-foreground">
       <section className="w-full max-w-lg border border-border bg-card p-7 shadow-xl sm:p-10">
         <Link href="/" className="font-serif text-2xl font-bold">
-          Const<span className="text-primary">Doc</span>
+          Grupo <span className="text-primary">G2H</span>
         </Link>
         <p className="mt-12 text-xs font-bold uppercase tracking-[.18em] text-primary">
           Start securely

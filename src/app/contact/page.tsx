@@ -6,7 +6,10 @@ import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contacto",
+  description:
+    "Contacta a Grupo G2H · Servicios Integrales. Escríbenos tu consulta sobre permisos, documentos y trámites de cumplimiento en México.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
@@ -40,11 +43,11 @@ export default function ContactPage() {
             <h3 className="font-serif text-2xl">Reach us directly</h3>
             <div className="mt-6 space-y-5 text-sm">
               <a
-                href="mailto:hello@constdoc.example"
+                href="mailto:contacto@grupog2h.com"
                 className="flex items-start gap-3 hover:text-primary"
               >
                 <Mail className="mt-0.5 shrink-0 text-primary" size={18} />
-                <span>hello@constdoc.example</span>
+                <span>contacto@grupog2h.com</span>
               </a>
               <a href="tel:+5215512345678" className="flex items-start gap-3 hover:text-primary">
                 <Phone className="mt-0.5 shrink-0 text-primary" size={18} />

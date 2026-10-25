@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
+import { aboutImage } from "@/data/site-images";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "Quiénes somos",
+  description:
+    "Conoce a Grupo G2H · Servicios Integrales: gestionamos permisos y documentos de cumplimiento ante el gobierno en México, de principio a fin.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
@@ -18,6 +23,18 @@ export default function AboutPage() {
         <h1 className="mt-4 font-serif text-5xl leading-tight sm:text-6xl">
           Compliance work should feel clear, accountable, and ready.
         </h1>
+        {aboutImage && (
+          <div className="relative mt-10 aspect-[16/7] w-full overflow-hidden rounded-[20px] shadow-[var(--elev-3)]">
+            <Image
+              src={aboutImage}
+              alt="Recepción corporativa moderna de Grupo G2H"
+              fill
+              sizes="(max-width: 768px) 100vw, 896px"
+              className="object-cover"
+              priority={false}
+            />
+          </div>
+        )}
         <div className="mt-10 grid gap-8 text-lg leading-8 text-muted-foreground md:grid-cols-2">
           <p>
             Grupo G2H brings services, quotations, documents, approvals, and renewal milestones into

@@ -7,7 +7,10 @@ import { getPublicCategories } from "@/lib/public-api";
 import { getServerLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
-  title: "Packages",
+  title: "Paquetes",
+  description:
+    "Paquetes de servicios de Grupo G2H para empresas y particulares: precios transparentes en MXN y gestión completa de tus trámites ante el gobierno.",
+  alternates: { canonical: "/packages" },
 };
 
 /**

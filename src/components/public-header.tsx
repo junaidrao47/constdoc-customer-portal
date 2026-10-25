@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { BrandLogo } from "@/components/brand-logo";
+import { OfferBar } from "@/components/offer-bar";
 import { cn } from "@/lib/utils";
 
 function useCategories() {
@@ -80,7 +81,9 @@ export function PublicHeader() {
   const countOf = (c: CategoryWithCount) => (c.serviceCount ?? 0) + (c.packageCount ?? 0);
 
   return (
-    <header
+    <>
+      <OfferBar />
+      <header
       className={cn(
         "sticky top-0 z-50 transition-all duration-300",
         scrolled
@@ -203,6 +206,7 @@ export function PublicHeader() {
           </Sheet>
         </div>
       </nav>
-    </header>
+      </header>
+    </>
   );
 }

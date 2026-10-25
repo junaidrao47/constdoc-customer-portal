@@ -3,7 +3,10 @@ import { PublicFooter } from "@/components/public-footer";
 import { PublicHeader } from "@/components/public-header";
 
 export const metadata: Metadata = {
-  title: "FAQ",
+  title: "Preguntas frecuentes",
+  description:
+    "Preguntas frecuentes sobre cotizaciones, carga de documentos, fases de aprobación y descargas en Grupo G2H · Servicios Integrales.",
+  alternates: { canonical: "/faq" },
 };
 
 const questions = [

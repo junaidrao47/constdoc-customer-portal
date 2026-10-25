@@ -8,7 +8,10 @@ import { getPublicCategories } from "@/lib/public-api";
 import { getServerLocale } from "@/lib/locale";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Servicios",
+  description:
+    "Servicios de gestión documental y trámites de cumplimiento en México: cotiza en línea, sube tus documentos y sigue cada fase de aprobación.",
+  alternates: { canonical: "/services" },
 };
 
 /** See the note on `revalidate` in `/packages`: the real caching is per-fetch. */

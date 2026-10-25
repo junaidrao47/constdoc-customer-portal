@@ -6,6 +6,7 @@ import { Clock, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useLocale } from "@/lib/use-locale";
 import { t } from "@/lib/messages";
+import { LocaleToggle } from "@/components/locale-toggle";
 import type { AccountStatus } from "@/lib/types";
 
 /**
@@ -21,9 +22,12 @@ export function WaitingForApproval({ accountStatus }: { accountStatus: AccountSt
   return (
     <main className="flex min-h-screen items-center justify-center bg-primary px-5 py-10 text-foreground">
       <section className="w-full max-w-md border border-primary-foreground/10 bg-background p-7 text-center shadow-2xl sm:p-10">
-        <span className="font-serif text-2xl font-bold">
-          Const<span className="text-primary">Doc</span>
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="font-serif text-2xl font-bold">
+            Grupo <span className="text-primary">G2H</span>
+          </span>
+          <LocaleToggle />
+        </div>
         <div className="mt-8 flex justify-center">
           <span
             className={`flex h-14 w-14 items-center justify-center rounded-full ${suspended ? "bg-destructive/10 text-destructive" : "bg-warning/10 text-warning"}`}

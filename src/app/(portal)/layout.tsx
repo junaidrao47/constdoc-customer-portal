@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useAccountGate } from "@/lib/account-gate";
+import { LocaleToggle } from "@/components/locale-toggle";
 import { WaitingForApproval } from "@/components/waiting-for-approval";
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
@@ -38,9 +39,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link href="/dashboard" className="font-serif text-2xl font-bold">
-            Const<span className="text-primary">Doc</span>
+            Grupo <span className="text-primary">G2H</span>
           </Link>
           <div className="flex items-center gap-5 text-sm">
+            <LocaleToggle />
             <span className="hidden text-muted-foreground sm:block">
               {session?.user.name ?? session?.user.email}
             </span>

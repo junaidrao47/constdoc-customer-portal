@@ -1,0 +1,65 @@
+[
+  {
+    "file": "hero.jpg",
+    "author": "Anton Lukin",
+    "authorUrl": "https://unsplash.com/@antonlukin",
+    "source": "https://unsplash.com/photos/a-view-of-a-city-with-tall-buildings-aX6HmZ1noy8",
+    "id": "aX6HmZ1noy8",
+    "alt": "a view of a city with tall buildings",
+    "kb": 467
+  },
+  {
+    "file": "about.jpg",
+    "author": "Aalo Lens",
+    "authorUrl": "https://unsplash.com/@aalolens",
+    "source": "https://unsplash.com/photos/modern-lobby-with-reception-desk-and-elevators-tUcVQwXsNck",
+    "id": "tUcVQwXsNck",
+    "alt": "Modern lobby with reception desk and elevators",
+    "kb": 266
+  },
+  {
+    "file": "category-fiscal.jpg",
+    "author": "Jakub Żerdzicki",
+    "authorUrl": "https://unsplash.com/@jakubzerdzicki",
+    "source": "https://unsplash.com/photos/a-calculator-sitting-on-top-of-a-table-next-to-a-laptop-8wLZi9OhsWU",
+    "id": "8wLZi9OhsWU",
+    "alt": "a calculator sitting on top of a table next to a laptop",
+    "kb": 77
+  },
+  {
+    "file": "category-laboral.jpg",
+    "author": "Austin Distel",
+    "authorUrl": "https://unsplash.com/@austindistel",
+    "source": "https://unsplash.com/photos/three-men-sitting-on-chair-beside-tables-mpN7xjKQ_Ns",
+    "id": "mpN7xjKQ_Ns",
+    "alt": "three men sitting on chair beside tables",
+    "kb": 268
+  },
+  {
+    "file": "category-ambiental.jpg",
+    "author": "Patrick Hendry",
+    "authorUrl": "https://unsplash.com/@worldsbetweenlines",
+    "source": "https://unsplash.com/photos/factories-with-smoke-under-cloudy-sky-6xeDIZgoPaw",
+    "id": "6xeDIZgoPaw",
+    "alt": "factories with smoke under cloudy sky",
+    "kb": 192
+  },
+  {
+    "file": "category-licencias.jpg",
+    "author": "Tem Rysh",
+    "authorUrl": "https://unsplash.com/@tem_rysh",
+    "source": "https://unsplash.com/photos/bicycle-parked-outside-lamp-shop-F6-U5fGAOik",
+    "id": "F6-U5fGAOik",
+    "alt": "A bicycle parked on a cobblestone sidewalk in front of a lamp shop",
+    "kb": 242
+  },
+  {
+    "file": "category-apertura.jpg",
+    "author": "Mike Petrucci",
+    "authorUrl": "https://unsplash.com/@mikepetrucci",
+    "source": "https://unsplash.com/photos/gray-and-blue-open-signage-c9FQyqIECds",
+    "id": "c9FQyqIECds",
+    "alt": "gray and blue Open signage",
+    "kb": 126
+  }
+]

@@ -50,7 +50,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-primary px-5 py-10 text-foreground">
       <section className="w-full max-w-md border border-primary-foreground/10 bg-background p-7 shadow-2xl sm:p-10">
         <Link href="/" className="font-serif text-2xl font-bold">
-          Const<span className="text-primary">Doc</span>
+          Grupo <span className="text-primary">G2H</span>
         </Link>
         <p className="mt-12 text-xs font-bold uppercase tracking-[.18em] text-primary">
           Customer portal

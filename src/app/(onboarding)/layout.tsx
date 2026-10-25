@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useAccountGate } from "@/lib/account-gate";
 import { useLocale } from "@/lib/use-locale";
 import { t } from "@/lib/messages";
+import { LocaleToggle } from "@/components/locale-toggle";
 import { WaitingForApproval } from "@/components/waiting-for-approval";
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
@@ -31,18 +32,21 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
           <span className="font-serif text-2xl font-bold">
-            Const<span className="text-primary">Doc</span>
+            Grupo <span className="text-primary">G2H</span>
           </span>
-          <button
-            type="button"
-            onClick={() => {
-              void logout();
-              router.replace("/login");
-            }}
-            className="text-sm font-semibold text-primary"
-          >
-            {t(locale, "waiting.signOut")}
-          </button>
+          <div className="flex items-center gap-4">
+            <LocaleToggle />
+            <button
+              type="button"
+              onClick={() => {
+                void logout();
+                router.replace("/login");
+              }}
+              className="text-sm font-semibold text-primary"
+            >
+              {t(locale, "waiting.signOut")}
+            </button>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-6 py-10 sm:py-14">{children}</main>
