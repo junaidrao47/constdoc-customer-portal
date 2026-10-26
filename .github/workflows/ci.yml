@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Baked into the client bundle; a placeholder is fine for a build check. The
+      # build-time catalogue fetch is bounded by a timeout and degrades gracefully
+      # when no API is reachable (see src/lib/public-api.ts), so CI needs no live API.
+      NEXT_PUBLIC_API_URL: https://api.example.com/api
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
