@@ -36,6 +36,11 @@ async function getPublic<T>(path: string, locale: Locale = DEFAULT_LOCALE): Prom
       // Next 16 does not cache `fetch` by default, so this per-request option — not the
       // segment-level `revalidate` export — is what actually makes the public pages ISR.
       next: { revalidate: 60 },
+      // Bound the wait so a slow (not dead) API cannot stall a request — or, critically,
+      // stall `next build`, where a static/ISR segment that hangs past 60s fails the whole
+      // build. On timeout the fetch aborts and the catch below returns ok:false, so a
+      // production/CI/Docker build with no reachable API degrades to the static routes.
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!response.ok) {
@@ -95,4 +100,56 @@ export function getPublicCatalogCategories(): Promise<ApiResult<CatalogCategory[
 
 export function getPublicCatalogItems(query = ""): Promise<ApiResult<PaginatedCatalogItems>> {
   return getPublic<PaginatedCatalogItems>(`/public/catalog/items${query ? `?${query}` : ""}`);
+}
+
+// ── Homepage CMS: hero carousel + editable content ───────────────────────────────
+
+export type HeroTransition = "fade" | "slide" | "zoom";
+
+export interface HeroSlide {
+  id: string;
+  imageUrl: string;
+  alt: string | null;
+  headline: string | null;
+  subheadline: string | null;
+  ctaLabel: string | null;
+  ctaUrl: string | null;
+  durationMs: number;
+  transition: HeroTransition;
+  overlayOpacity: number;
+  focalX: number;
+  focalY: number;
+}
+
+export interface HeroSettings {
+  autoplay: boolean;
+  defaultDurationMs: number;
+  transitionMs: number;
+  pauseOnHover: boolean;
+  loop: boolean;
+  headingFont: string;
+  bodyFont: string;
+  baseTextScale: number;
+}
+
+export interface HeroPayload {
+  slides: HeroSlide[];
+  settings: HeroSettings;
+}
+
+export interface ContentValue {
+  value: string;
+  fontFamily: string | null;
+  fontWeight: number | null;
+  sizeStep: string | null;
+}
+
+export type SiteContent = Record<string, ContentValue>;
+
+export function getPublicHero(locale: Locale = DEFAULT_LOCALE): Promise<ApiResult<HeroPayload>> {
+  return getPublic<HeroPayload>(`/public/hero?locale=${locale}`, locale);
+}
+
+export function getPublicContent(locale: Locale = DEFAULT_LOCALE): Promise<ApiResult<SiteContent>> {
+  return getPublic<SiteContent>(`/public/content?locale=${locale}`, locale);
 }
