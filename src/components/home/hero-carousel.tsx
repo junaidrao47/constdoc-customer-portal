@@ -28,7 +28,7 @@ export function HeroCarousel({ data }: { data: HeroPayload }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const prevIndex = useRef(0);
+  const [prevIndex, setPrevIndex] = useState(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export function HeroCarousel({ data }: { data: HeroPayload }) {
   const count = slides.length;
   const go = useCallback(
     (next: number) => {
-      prevIndex.current = index;
+      setPrevIndex(index);
       setIndex(((next % count) + count) % count);
     },
     [index, count],
@@ -55,7 +55,7 @@ export function HeroCarousel({ data }: { data: HeroPayload }) {
     if (!autoplayOn) return;
     const duration = slides[index]?.durationMs ?? settings.defaultDurationMs;
     timer.current = setTimeout(() => {
-      prevIndex.current = index;
+      setPrevIndex(index);
       setIndex((i) => (settings.loop ? (i + 1) % count : Math.min(i + 1, count - 1)));
     }, duration);
     return () => {
@@ -115,7 +115,7 @@ export function HeroCarousel({ data }: { data: HeroPayload }) {
           key={slide.id}
           slide={slide}
           active={i === index}
-          isPrevious={i === prevIndex.current}
+          isPrevious={i === prevIndex}
           eager={i === 0}
           transitionMs={transitionMs}
           durationMs={slide.durationMs ?? settings.defaultDurationMs}
