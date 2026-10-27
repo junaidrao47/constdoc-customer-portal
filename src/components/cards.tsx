@@ -105,7 +105,7 @@ export function ServiceCard({ service, locale }: { service: Service; locale: Loc
     <TiltCard className="h-full">
       <article className={cn(SHELL, "border-border bg-card shadow-[var(--elev-1)] group-hover/tilt:shadow-[var(--elev-3)]")}>
         <div className="relative">
-          <CardMedia icon={FileText} slug={service.category?.slug} />
+          <CardMedia icon={FileText} slug={service.category?.slug} imageUrl={service.imageUrl} />
           <div className="absolute left-4 top-4">
             <CategoryBadge name={service.category?.name} />
           </div>

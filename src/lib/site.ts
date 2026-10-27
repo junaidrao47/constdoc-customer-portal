@@ -28,6 +28,7 @@ export const PUBLIC_ROUTES: ReadonlyArray<{
   { path: "/about", priority: 0.7, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.7, changeFrequency: "monthly" },
   { path: "/faq", priority: 0.6, changeFrequency: "monthly" },
+  { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 export function absoluteUrl(path: string): string {

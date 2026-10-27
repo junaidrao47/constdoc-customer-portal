@@ -9,4 +9,5 @@ Dockerfile
 README.md
 .vscode
 coverage
+docs
 *.log

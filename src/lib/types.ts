@@ -95,10 +95,17 @@ export interface OnboardingResponse {
   onboarding: Onboarding;
   personas: string[];
 }
+export interface ServiceProcessStep {
+  title: string;
+  description: string;
+}
 export interface Service {
   id: string;
   name: string;
   description: string | null;
+  imageUrl?: string | null;
+  whatsIncluded?: string[];
+  processSteps?: ServiceProcessStep[];
   basePrice: number;
   category?: PublicCategoryRef | null;
 }

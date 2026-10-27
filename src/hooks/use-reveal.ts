@@ -25,12 +25,15 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
     if (prefersReducedMotion() || typeof IntersectionObserver === "undefined") return;
 
     el.classList.add("reveal-init");
+    const reveal = () => {
+      el.classList.remove("reveal-init");
+      el.classList.add("reveal-in");
+    };
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            el.classList.remove("reveal-init");
-            el.classList.add("reveal-in");
+            reveal();
             observer.unobserve(el);
           }
         }
@@ -38,7 +41,14 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
       { threshold, rootMargin },
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    // Failsafe: never leave a section invisible if the observer never fires
+    // (headless/odd viewports, programmatic scroll, a missed intersection). The
+    // on-scroll animation still plays for anything the viewer reaches first.
+    const fallback = window.setTimeout(reveal, 2000);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallback);
+    };
   }, [threshold, rootMargin]);
 
   return ref;
